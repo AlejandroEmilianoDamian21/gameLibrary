@@ -5,6 +5,7 @@ import (
 	"log"
 	"strconv"
 
+	"github.com/AlejandroEmilianoDamian21/listGamesGO/models"
 	"github.com/AlejandroEmilianoDamian21/listGamesGO/utils"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
@@ -52,5 +53,6 @@ func ConnectDB() *gorm.DB {
 		return nil
 	}
 	log.Println("DB connected")
+	DB.AutoMigrate(&models.Juego{})
 	return DB
 }
