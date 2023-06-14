@@ -33,9 +33,34 @@ func (j *JuegoDB) ObtenerJuego(id int) (*models.Juego, error) {
 func (j *JuegoDB) ObtenerJuegos() ([]*models.Juego, error) {
 	var juego []*models.Juego = []*models.Juego{new(models.Juego)}
 	/*Select * from juegos*/
-
 	if err := j.db.Find(&juego).Error; err != nil {
 		return nil, err
 	}
 	return juego, nil
+}
+
+/*Crear un juego*/
+func (j *JuegoDB) CrearJuego(nuevoJuego *models.Juego) (*models.Juego, bool, error) {
+	if err := j.db.Create(&nuevoJuego).Error; err != nil {
+		return nil, false, err
+	}
+	return nuevoJuego, true, nil
+}
+
+/*ModificarJuego Modifica el juego*/
+func (j *JuegoDB) ModificarJuego(nuevoJuego *models.Juego) (bool, error) {
+	if err := j.db.Model(&models.Juego{}).Updates(&nuevoJuego).Error; err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+/*EliminarJuego Elimina un Juego*/
+func (j *JuegoDB) EliminarJuego(id int) (bool, error) {
+	juego := &models.Juego{}
+
+	if err := j.db.Delete(juego, id).Error; err != nil {
+		return false, err
+	}
+	return true, nil
 }
