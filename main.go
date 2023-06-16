@@ -30,7 +30,8 @@ func main() {
 
 	app.Get("/:id", nuevoHandler.ObtenerJuego)
 	app.Get("/juegos", nuevoHandler.ObtenerTodosJuegos)
-	app.Post("/", nuevoHandler.CrearJuego)
+	app.Post("/juego", nuevoHandler.CrearJuego)
+	app.Put("/juego", nuevoHandler.ModificarJuego)
 	app.Delete("/:id", nuevoHandler.EliminarJuego)
 
 	DB := storage.ConnectDB()
@@ -38,6 +39,6 @@ func main() {
 
 	log.Println(DB.RowsAffected)
 
-	log.Fatal(app.Listen(":3001"))
+	log.Fatal(app.Listen(":3000"))
 
 }

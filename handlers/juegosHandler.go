@@ -48,9 +48,10 @@ func (j *juegosHandler) ObtenerTodosJuegos(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Error in DB", "data": err.Error()})
 	}
-
 	return c.Status(fiber.StatusAccepted).JSON(juego)
 }
+
+/********************/
 
 /*CREAR UN NUEVO JUEGO*/
 func (j *juegosHandler) CrearJuego(c *fiber.Ctx) error {
@@ -83,8 +84,44 @@ func (j *juegosHandler) CrearJuego(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusAccepted).JSON(juego)
 }
 
-/*MODIFICAR UN JUEGO*/
 /********************/
+
+/*MODIFICAR UN JUEGO*/
+func (j *juegosHandler) ModificarJuego(c *fiber.Ctx) error {
+
+	var body *models.Juego
+	/*Obtener los datos del body*/
+	if err := c.BodyParser(&body); err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Revisa tu body", "data": err.Error()})
+	}
+
+	/*Modificar el juego*/
+	var nuevoJuego *models.Juego
+
+	/*Comprobacion de los datos*/
+	/*Nombre*/
+	if len(strings.TrimSpace(body.Nombre)) < 0 || strings.TrimSpace(body.Nombre) == "" {
+		nuevoJuego.Nombre = body.Nombre
+	}
+
+	if len(strings.TrimSpace(body.Desarrollador)) < 0 || strings.TrimSpace(body.Desarrollador) == "" {
+		nuevoJuego.Desarrollador = body.Desarrollador
+	}
+
+	if body.Precio < 0 {
+		nuevoJuego.Precio = body.Precio
+	}
+	/*Modificar el juego*/
+	exitoso, err := j.BaseDatos.ModificarJuego(body)
+
+	if err != nil || !exitoso {
+		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Error in DB", "data": err.Error()})
+	}
+	return c.SendStatus(fiber.StatusAccepted)
+}
+
+/********************/
+
 /*ELIMINAR JUEGO*/
 func (j *juegosHandler) EliminarJuego(c *fiber.Ctx) error {
 	ID := c.Params("id")
@@ -108,3 +145,5 @@ func (j *juegosHandler) EliminarJuego(c *fiber.Ctx) error {
 	return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "ok", "message": "Game delete"})
 
 }
+
+/********************/

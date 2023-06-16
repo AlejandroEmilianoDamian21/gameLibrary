@@ -17,7 +17,6 @@ type Juego struct {
 	  	UpdatedAt time.Time
 	  	DeletedAt gorm.DeletedAt `gorm:"index"`
 		}*/
-
 	Nombre        string `gorm:"not null" json:"nombre"`
 	Desarrollador string `gorm:"not null" json:"desarrollador"`
 	Precio        int    `gorm:"not null" json:"precio"`
