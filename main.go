@@ -29,6 +29,8 @@ func main() {
 	})
 
 	app.Get("/:id", nuevoHandler.ObtenerJuego)
+	app.Get("/juegos", nuevoHandler.ObtenerTodosJuegos)
+	app.Post("/", nuevoHandler.CrearJuego)
 	app.Delete("/:id", nuevoHandler.EliminarJuego)
 
 	DB := storage.ConnectDB()

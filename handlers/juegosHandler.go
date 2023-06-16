@@ -2,7 +2,9 @@ package handlers
 
 import (
 	"strconv"
+	"strings"
 
+	"github.com/AlejandroEmilianoDamian21/listGamesGO/models"
 	"github.com/AlejandroEmilianoDamian21/listGamesGO/storage"
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,6 +20,7 @@ func NuevoJuegosHandler() *juegosHandler {
 	}
 }
 
+/*OBTENER JUEGO POR ID*/
 func (j *juegosHandler) ObtenerJuego(c *fiber.Ctx) error {
 	/*Obtener el ID desde los parametros, es uno de los metodos de fiber*/
 	ID := c.Params("id")
@@ -39,6 +42,50 @@ func (j *juegosHandler) ObtenerJuego(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusAccepted).JSON(juego)
 }
 
+/*OBTENER TODOS LOS JUEGOS*/
+func (j *juegosHandler) ObtenerTodosJuegos(c *fiber.Ctx) error {
+	juego, err := j.BaseDatos.ObtenerJuegos()
+	if err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Error in DB", "data": err.Error()})
+	}
+
+	return c.Status(fiber.StatusAccepted).JSON(juego)
+}
+
+/*CREAR UN NUEVO JUEGO*/
+func (j *juegosHandler) CrearJuego(c *fiber.Ctx) error {
+	var nuevoJuego *models.Juego
+	/*Obtener los datos del body*/
+	if err := c.BodyParser(&nuevoJuego); err != nil {
+		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Revisa tu body", "data": err.Error()})
+	}
+	/*Comprobar los datos del Juego*/
+	/*Nombre*/
+	if len(strings.TrimSpace(nuevoJuego.Nombre)) <= 0 || strings.TrimSpace(nuevoJuego.Nombre) == "" {
+		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "El nombre del juego es obligatorio"})
+	}
+	/*Desarrollador*/
+	if len(strings.TrimSpace(nuevoJuego.Desarrollador)) <= 0 || strings.TrimSpace(nuevoJuego.Desarrollador) == "" {
+		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "El desarrollador del juego es obligatorio"})
+
+	}
+	/*Precio*/
+	if nuevoJuego.Precio < 0 {
+		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "El precio del juego no debe ser negativo"})
+	}
+
+	juego, existoso, err := j.BaseDatos.CrearJuego(nuevoJuego)
+
+	if err != nil || !existoso {
+		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Error in DB", "data": err.Error()})
+	}
+
+	return c.Status(fiber.StatusAccepted).JSON(juego)
+}
+
+/*MODIFICAR UN JUEGO*/
+/********************/
+/*ELIMINAR JUEGO*/
 func (j *juegosHandler) EliminarJuego(c *fiber.Ctx) error {
 	ID := c.Params("id")
 
