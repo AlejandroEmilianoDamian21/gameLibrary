@@ -23,13 +23,14 @@ func NuevoJuegosHandler() *juegosHandler {
 /*OBTENER JUEGO POR ID*/
 func (j *juegosHandler) ObtenerJuego(c *fiber.Ctx) error {
 	/*Obtener el ID desde los parametros, es uno de los metodos de fiber*/
-	ID := c.Params("id")
+	ID := c.Params("ID")
 	/*Si el ID esta vacio, no se envio asi que regresa un error*/
 	if len(ID) < 0 {
 		/*Esta es la forma de regresar errores  en fiber*/
 		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Review your input"})
 	}
 	intID, err := strconv.Atoi(ID)
+
 	if err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Error converting in Integer", "data": err.Error()})
 	}
