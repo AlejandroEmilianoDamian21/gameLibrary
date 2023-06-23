@@ -42,7 +42,7 @@ func main() {
 	DB := storage.ConnectDB()
 	defer DB.Close()
 
-	log.Println(DB.RowsAffected)
+	// log.Println(DB.RowsAffected)
 
 	log.Fatal(app.Listen(":3030"))
 

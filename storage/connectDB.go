@@ -13,6 +13,8 @@ import (
 	// _ "github.com/joho/godotenv/autoload"
 )
 
+var DB *gorm.DB
+
 func ConnectDB() *gorm.DB {
 	var (
 		host     = utils.AccessENV("DB_HOST")
@@ -52,7 +54,8 @@ func ConnectDB() *gorm.DB {
 		log.Fatalln("Any Error in connect the DB" + err.Error())
 		return nil
 	}
-	log.Println("DB connected")
+	log.Println("🚀 Connected Successfully to the Database")
 	DB.AutoMigrate(&models.Juego{})
+	DB.AutoMigrate(&models.User{})
 	return DB
 }
