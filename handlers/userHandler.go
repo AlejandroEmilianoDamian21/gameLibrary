@@ -1,9 +1,12 @@
 package handlers
 
 import (
-	"fmt"
+	"github.com/AlejandroEmilianoDamian21/listGamesGO/models"
+	"github.com/gofiber/fiber/v2"
 )
 
-func User() {
-	fmt.Println("User")
+func GetMe(c *fiber.Ctx) error {
+	user := c.Locals("user").(models.UserResponse)
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "data": fiber.Map{"user": user}})
 }

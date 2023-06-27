@@ -1,11 +1,14 @@
 package handlers
 
 import (
+	"fmt"
 	"strings"
+	"time"
 
 	"github.com/AlejandroEmilianoDamian21/listGamesGO/models"
 	"github.com/AlejandroEmilianoDamian21/listGamesGO/storage"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -56,4 +59,67 @@ func SignUpUser(c *fiber.Ctx) error {
 
 	// Devolver la respuesta con el usuario filtrado
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"status": "success", "data": fiber.Map{"user": models.FilterUserRecord(&newUser)}})
+}
+
+func SignInUser(c *fiber.Ctx) error {
+	var payload *models.SignInInput
+
+	if err := c.BodyParser(&payload); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": err.Error()})
+	}
+	errors := models.ValidateStruct(&payload)
+	if errors != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(errors)
+	}
+
+	var user models.User
+
+	result := storage.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
+
+	if result.Error != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": "Invalid email o Password"})
+	}
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(payload.Password))
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": "Invalid email or Password"})
+	}
+
+	config, _ := storage.LoadConfig(".")
+
+	tokenByte := jwt.New(jwt.SigningMethodHS256)
+
+	now := time.Now().UTC()
+	claims := tokenByte.Claims.(jwt.MapClaims)
+
+	claims["sub"] = user.ID
+	claims["exp"] = now.Add(config.JwtExpiresIn).Unix()
+	claims["iat"] = now.Unix()
+	claims["nbf"] = now.Unix()
+
+	tokenString, err := tokenByte.SignedString([]byte(config.JwtSecret))
+
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": fmt.Sprintf("generating JWT Token failed: %v ", err)})
+	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:     "token",
+		Value:    tokenString,
+		Path:     "/",
+		MaxAge:   config.JwtMaxAge * 60,
+		Secure:   false,
+		HTTPOnly: true,
+		Domain:   "localhost",
+	})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "token": tokenString})
+}
+
+func LogoutUser(c *fiber.Ctx) error {
+	expired := time.Now().Add(-time.Hour * 24)
+	c.Cookie(&fiber.Cookie{
+		Name:    "token",
+		Value:   "",
+		Expires: expired,
+	})
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success"})
 }

@@ -4,16 +4,48 @@ import (
 	"fmt"
 	"log"
 	"strconv"
+	"time"
 
 	"github.com/AlejandroEmilianoDamian21/listGamesGO/models"
 	"github.com/AlejandroEmilianoDamian21/listGamesGO/utils"
 	"github.com/jinzhu/gorm"
 	_ "github.com/lib/pq"
+	"github.com/spf13/viper"
 	//Autoload the env
 	// _ "github.com/joho/godotenv/autoload"
 )
 
 var DB *gorm.DB
+
+type Config struct {
+	DBHost         string `mapstructure:"POSTGRES_HOST"`
+	DBUserName     string `mapstructure:"POSTGRES_USER"`
+	DBUserPassword string `mapstructure:"POSTGRES_PASSWORD"`
+	DBName         string `mapstructure:"POSTGRES_DB"`
+	DBPort         string `mapstructure:"POSTGRES_PORT"`
+
+	JwtSecret    string        `mapstructure:"JWT_SECRET"`
+	JwtExpiresIn time.Duration `mapstructure:"JWT_EXPIRED_IN"`
+	JwtMaxAge    int           `mapstructure:"JWT_MAXAGE"`
+
+	ClientOrigin string `mapstructure:"CLIENT_ORIGIN"`
+}
+
+func LoadConfig(path string) (config Config, err error) {
+	viper.AddConfigPath(path)
+	viper.SetConfigType("env")
+	viper.SetConfigName("app")
+
+	viper.AutomaticEnv()
+
+	err = viper.ReadInConfig()
+	if err != nil {
+		return
+	}
+
+	err = viper.Unmarshal(&config)
+	return
+}
 
 func ConnectDB() *gorm.DB {
 	var (
