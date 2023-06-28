@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/AlejandroEmilianoDamian21/listGamesGO/initializers"
 	"github.com/AlejandroEmilianoDamian21/listGamesGO/models"
-	"github.com/AlejandroEmilianoDamian21/listGamesGO/storage"
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
@@ -48,7 +48,7 @@ func SignUpUser(c *fiber.Ctx) error {
 	}
 
 	// Crear el registro del nuevo usuario en la base de datos
-	result := storage.DB.Create(&newUser)
+	result := initializers.DB.Create(&newUser)
 
 	// Verificar si ocurrieron errores durante la creación del usuario
 	if result.Error != nil && strings.Contains(result.Error.Error(), "duplicate key value violates unique") {
@@ -74,7 +74,7 @@ func SignInUser(c *fiber.Ctx) error {
 
 	var user models.User
 
-	result := storage.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
+	result := initializers.DB.First(&user, "email = ?", strings.ToLower(payload.Email))
 
 	if result.Error != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": "Invalid email o Password"})
@@ -84,7 +84,7 @@ func SignInUser(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"status": "fail", "message": "Invalid email or Password"})
 	}
 
-	config, _ := storage.LoadConfig(".")
+	config, _ := initializers.LoadConfig(".")
 
 	tokenByte := jwt.New(jwt.SigningMethodHS256)
 

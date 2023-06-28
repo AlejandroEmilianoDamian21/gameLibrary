@@ -1,66 +1,72 @@
 package storage
 
-import (
-	"github.com/AlejandroEmilianoDamian21/listGamesGO/models"
+import "fmt"
 
-	"github.com/jinzhu/gorm"
-)
-
-/*JuegoDB struct*/
-type JuegoDB struct {
-	db *gorm.DB
+func hi() {
+	fmt.Println("Hola")
 }
 
-/*NuevoJuegoDB Create a new storage user service*/
-func NuevoJuegoDB() JuegoDB {
-	nuevaDB := ConnectDB()
-	nuevoServicio := JuegoDB{db: nuevaDB}
+// import (
+// 	"github.com/AlejandroEmilianoDamian21/listGamesGO/initializers"
+// 	"github.com/AlejandroEmilianoDamian21/listGamesGO/models"
+// 	"github.com/jinzhu/gorm"
+// )
 
-	return nuevoServicio
-}
+// /*JuegoDB struct*/
+// type JuegoDB struct {
+// 	db *gorm.DB
+// }
 
-/*Obtener Juego del juego con el ID*/
-func (j *JuegoDB) ObtenerJuego(id int) (*models.Juego, error) {
-	var juego *models.Juego = new(models.Juego)
-	// SELECT * FROM juegos WHERE id = 10;
-	if err := j.db.First(&juego, id).Error; err != nil {
-		return nil, err
-	}
-	return juego, nil
-}
+// /*NuevoJuegoDB Create a new storage user service*/
+// func NuevoJuegoDB() JuegoDB {
+// 	nuevaDB := initializers.ConnectDB()
+// 	nuevoServicio := JuegoDB{db: nuevaDB}
 
-/*ObtenerJuegos  Obtener todos  los  juegos */
-func (j *JuegoDB) ObtenerJuegos() ([]*models.Juego, error) {
-	var juego []*models.Juego = []*models.Juego{new(models.Juego)}
-	/*Select * from juegos*/
-	if err := j.db.Find(&juego).Error; err != nil {
-		return nil, err
-	}
-	return juego, nil
-}
+// 	return nuevoServicio
+// }
 
-/*Crear un juego*/
-func (j *JuegoDB) CrearJuego(nuevoJuego *models.Juego) (*models.Juego, bool, error) {
-	if err := j.db.Create(&nuevoJuego).Error; err != nil {
-		return nil, false, err
-	}
-	return nuevoJuego, true, nil
-}
+// /*Obtener Juego del juego con el ID*/
+// func (j *JuegoDB) ObtenerJuego(id int) (*models.Juego, error) {
+// 	var juego *models.Juego = new(models.Juego)
+// 	// SELECT * FROM juegos WHERE id = 10;
+// 	if err := j.db.First(&juego, id).Error; err != nil {
+// 		return nil, err
+// 	}
+// 	return juego, nil
+// }
 
-/*ModificarJuego Modifica el juego*/
-func (j *JuegoDB) ModificarJuego(nuevoJuego *models.Juego) (bool, error) {
-	if err := j.db.Model(&models.Juego{}).Updates(&nuevoJuego).Error; err != nil {
-		return false, err
-	}
-	return true, nil
-}
+// /*ObtenerJuegos  Obtener todos  los  juegos */
+// func (j *JuegoDB) ObtenerJuegos() ([]*models.Juego, error) {
+// 	var juego []*models.Juego = []*models.Juego{new(models.Juego)}
+// 	/*Select * from juegos*/
+// 	if err := j.db.Find(&juego).Error; err != nil {
+// 		return nil, err
+// 	}
+// 	return juego, nil
+// }
 
-/*EliminarJuego Elimina un Juego*/
-func (j *JuegoDB) EliminarJuego(id int) (bool, error) {
-	juego := &models.Juego{}
+// /*Crear un juego*/
+// func (j *JuegoDB) CrearJuego(nuevoJuego *models.Juego) (*models.Juego, bool, error) {
+// 	if err := j.db.Create(&nuevoJuego).Error; err != nil {
+// 		return nil, false, err
+// 	}
+// 	return nuevoJuego, true, nil
+// }
 
-	if err := j.db.Delete(juego, id).Error; err != nil {
-		return false, err
-	}
-	return true, nil
-}
+// /*ModificarJuego Modifica el juego*/
+// func (j *JuegoDB) ModificarJuego(nuevoJuego *models.Juego) (bool, error) {
+// 	if err := j.db.Model(&models.Juego{}).Updates(&nuevoJuego).Error; err != nil {
+// 		return false, err
+// 	}
+// 	return true, nil
+// }
+
+// /*EliminarJuego Elimina un Juego*/
+// func (j *JuegoDB) EliminarJuego(id int) (bool, error) {
+// 	juego := &models.Juego{}
+
+// 	if err := j.db.Delete(juego, id).Error; err != nil {
+// 		return false, err
+// 	}
+// 	return true, nil
+// }
