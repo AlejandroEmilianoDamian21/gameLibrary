@@ -12,6 +12,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var isLogoutAllowed bool = false
+
 func SignUpUser(c *fiber.Ctx) error {
 	var payload *models.SignUpInput
 
@@ -111,15 +113,22 @@ func SignInUser(c *fiber.Ctx) error {
 		HTTPOnly: true,
 		Domain:   "localhost",
 	})
+	isLogoutAllowed = true
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "token": tokenString})
 }
 
 func LogoutUser(c *fiber.Ctx) error {
+
 	expired := time.Now().Add(-time.Hour * 24)
+
 	c.Cookie(&fiber.Cookie{
 		Name:    "token",
 		Value:   "",
 		Expires: expired,
+		MaxAge:  -1,
 	})
+
+	isLogoutAllowed = false
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success"})
+
 }

@@ -28,6 +28,9 @@ func NuevoJuegosHandler() *juegosHandler {
 
 /*OBTENER JUEGO POR ID*/
 func (j *juegosHandler) ObtenerJuego(c *fiber.Ctx) error {
+	if !isLogoutAllowed {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"status": "error", "message": "Access denied"})
+	}
 	/*Obtener el ID desde los parametros, es uno de los metodos de fiber*/
 	ID := c.Params("ID")
 	/*Si el ID esta vacio, no se envio asi que regresa un error*/
@@ -51,11 +54,17 @@ func (j *juegosHandler) ObtenerJuego(c *fiber.Ctx) error {
 
 /*OBTENER TODOS LOS JUEGOS*/
 func (j *juegosHandler) ObtenerTodosJuegos(c *fiber.Ctx) error {
+
+	if !isLogoutAllowed {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"status": "error", "message": "Access denied"})
+	}
+
 	juego, err := j.BaseDatos.ObtenerJuegos()
 	if err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Error in DB", "data": err.Error()})
 	}
 	return c.Status(fiber.StatusAccepted).JSON(juego)
+
 }
 
 /********************/
@@ -63,6 +72,11 @@ func (j *juegosHandler) ObtenerTodosJuegos(c *fiber.Ctx) error {
 /*CREAR UN NUEVO JUEGO*/
 func (j *juegosHandler) CrearJuego(c *fiber.Ctx) error {
 	var nuevoJuego *models.Juego
+
+	if !isLogoutAllowed {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"status": "error", "message": "Access denied"})
+	}
+
 	/*Obtener los datos del body*/
 	if err := c.BodyParser(&nuevoJuego); err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Revisa tu body", "data": err.Error()})
@@ -97,6 +111,11 @@ func (j *juegosHandler) CrearJuego(c *fiber.Ctx) error {
 func (j *juegosHandler) ModificarJuego(c *fiber.Ctx) error {
 
 	var body *models.Juego
+
+	if !isLogoutAllowed {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"status": "error", "message": "Access denied"})
+	}
+
 	/*Obtener los datos del body*/
 	if err := c.BodyParser(&body); err != nil {
 		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Revisa tu body", "data": err.Error()})
@@ -132,6 +151,10 @@ func (j *juegosHandler) ModificarJuego(c *fiber.Ctx) error {
 /*ELIMINAR JUEGO*/
 func (j *juegosHandler) EliminarJuego(c *fiber.Ctx) error {
 	ID := c.Params("id")
+
+	if !isLogoutAllowed {
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"status": "error", "message": "Access denied"})
+	}
 
 	if len(ID) < 0 {
 		return c.Status(fiber.ErrBadRequest.Code).JSON(fiber.Map{"status": "error", "message": "Review your input"})

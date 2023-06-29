@@ -20,6 +20,8 @@ func init() {
 	initializers.ConnectDB(&config)
 }
 
+var isLogoutAllowed = true
+
 func main() {
 
 	// log.Println("Start Proyect")
@@ -56,10 +58,11 @@ func main() {
 	})
 	nuevoHandler := handlers.NuevoJuegosHandler()
 
-	micro.Get("/juego", nuevoHandler.ObtenerTodosJuegos)
-	micro.Post("/juego", nuevoHandler.CrearJuego)
-	micro.Put("/juego", nuevoHandler.ModificarJuego)
-	micro.Delete("/juego/:id", nuevoHandler.EliminarJuego)
+	micro.Get("/juego", middleware.DeserializeUser, nuevoHandler.ObtenerTodosJuegos)
+	micro.Get("/juego/:id", middleware.DeserializeUser, nuevoHandler.ObtenerJuego)
+	micro.Post("/juego", middleware.DeserializeUser, nuevoHandler.CrearJuego)
+	micro.Put("/juego", middleware.DeserializeUser, nuevoHandler.ModificarJuego)
+	micro.Delete("/juego/:id", middleware.DeserializeUser, nuevoHandler.EliminarJuego)
 
 	micro.All("*", func(c *fiber.Ctx) error {
 		path := c.Path()
