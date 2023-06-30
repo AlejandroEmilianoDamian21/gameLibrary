@@ -56,13 +56,17 @@ func main() {
 	micro.Get("/healthchecker", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Welcome to Golang, Fiber, and GORM"})
 	})
-	nuevoHandler := handlers.NuevoJuegosHandler()
+	nuevoHandlerJuegos := handlers.NuevoJuegosHandler()
+	/*Rutas de los juegos*/
+	micro.Get("/juego", middleware.DeserializeUser, nuevoHandlerJuegos.ObtenerTodosJuegos)
+	micro.Get("/juego/:id", middleware.DeserializeUser, nuevoHandlerJuegos.ObtenerJuego)
+	micro.Post("/juego", middleware.DeserializeUser, nuevoHandlerJuegos.CrearJuego)
+	micro.Put("/juego", middleware.DeserializeUser, nuevoHandlerJuegos.ModificarJuego)
+	micro.Delete("/juego/:id", middleware.DeserializeUser, nuevoHandlerJuegos.EliminarJuego)
 
-	micro.Get("/juego", middleware.DeserializeUser, nuevoHandler.ObtenerTodosJuegos)
-	micro.Get("/juego/:id", middleware.DeserializeUser, nuevoHandler.ObtenerJuego)
-	micro.Post("/juego", middleware.DeserializeUser, nuevoHandler.CrearJuego)
-	micro.Put("/juego", middleware.DeserializeUser, nuevoHandler.ModificarJuego)
-	micro.Delete("/juego/:id", middleware.DeserializeUser, nuevoHandler.EliminarJuego)
+	nuevoHandlerGeneros := handlers.NuevoGenerosHandler()
+
+	micro.Get("/genero", middleware.DeserializeUser, nuevoHandlerGeneros.ObtenerTodosGeneros)
 
 	micro.All("*", func(c *fiber.Ctx) error {
 		path := c.Path()

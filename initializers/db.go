@@ -39,6 +39,12 @@ func ConnectDB(config *Config) *gorm.DB {
 		os.Exit(1)
 	}
 
+	err = DB.AutoMigrate(&models.Genero{})
+	if err != nil {
+		log.Fatal("Generic migration failed: \n", err.Error())
+		os.Exit(1)
+	}
+
 	log.Println("🚀 Connected Successfully to the Database")
 
 	return DB

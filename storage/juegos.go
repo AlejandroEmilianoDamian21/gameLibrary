@@ -36,21 +36,21 @@ func NuevoJuegoDB() JuegoDB {
 	return nuevoServicio
 }
 
-/*Obtener Juego del juego con el ID*/
-func (j *JuegoDB) ObtenerJuego(id int) (*models.Juego, error) {
-	var juego *models.Juego = new(models.Juego)
-	// SELECT * FROM juegos WHERE id = 10;
-	if err := j.db.First(&juego, id).Error; err != nil {
-		return nil, err
-	}
-	return juego, nil
-}
-
 /*ObtenerJuegos  Obtener todos  los  juegos */
 func (j *JuegoDB) ObtenerJuegos() ([]*models.Juego, error) {
 	var juego []*models.Juego = []*models.Juego{new(models.Juego)}
 	/*Select * from juegos*/
 	if err := j.db.Find(&juego).Error; err != nil {
+		return nil, err
+	}
+	return juego, nil
+}
+
+/*Obtener Juego del juego con el ID*/
+func (j *JuegoDB) ObtenerJuego(id int) (*models.Juego, error) {
+	var juego *models.Juego = new(models.Juego)
+	// SELECT * FROM juegos WHERE id = 10;
+	if err := j.db.First(&juego, id).Error; err != nil {
 		return nil, err
 	}
 	return juego, nil

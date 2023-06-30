@@ -8,9 +8,9 @@ import (
 
 type Genero struct {
 	gorm.Model
-	Name        string `gorm:"type:varchar(100); unique"`
-	Description string
-	ImageURL    string
+	Nombre      string `gorm:"type:varchar(100);not null;unique" json:"nombre"`
+	Descripcion string `gorm:"type:varchar(200);not null" json:"descripcion"`
+	ImagenURL   string `gorm:"not null;default:'default.png'" json:"imagenUrl"`
 }
 
 func (u *Genero) AfterUpdate(tx *gorm.DB) (err error) {
