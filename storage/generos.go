@@ -43,3 +43,19 @@ func (g *GeneroDB) ObtenerGeneros() ([]*models.Genero, error) {
 	}
 	return genero, nil
 }
+
+/*Crear generos*/
+func (g *GeneroDB) CrearGenero(nuevoGenero *models.Genero) (*models.Genero, bool, error) {
+	if err := g.db.Create(&nuevoGenero).Error; err != nil {
+		return nil, false, err
+	}
+	return nuevoGenero, true, nil
+}
+
+/*Modificar generos*/
+func (g *GeneroDB) ModificarGenero(nuevoGenero *models.Genero) (bool, error) {
+	if err := g.db.Model(&models.Genero{}).Updates(&nuevoGenero).Error; err != nil {
+		return false, err
+	}
+	return true, nil
+}

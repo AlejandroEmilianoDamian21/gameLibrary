@@ -56,6 +56,8 @@ func main() {
 	micro.Get("/healthchecker", func(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{"status": "success", "message": "Welcome to Golang, Fiber, and GORM"})
 	})
+
+	/*Manejadors de Juegos*/
 	nuevoHandlerJuegos := handlers.NuevoJuegosHandler()
 	/*Rutas de los juegos*/
 	micro.Get("/juego", middleware.DeserializeUser, nuevoHandlerJuegos.ObtenerTodosJuegos)
@@ -64,9 +66,12 @@ func main() {
 	micro.Put("/juego", middleware.DeserializeUser, nuevoHandlerJuegos.ModificarJuego)
 	micro.Delete("/juego/:id", middleware.DeserializeUser, nuevoHandlerJuegos.EliminarJuego)
 
+	/*Manejadors de Juegos*/
 	nuevoHandlerGeneros := handlers.NuevoGenerosHandler()
-
+	/*Rutas de Generos*/
 	micro.Get("/genero", middleware.DeserializeUser, nuevoHandlerGeneros.ObtenerTodosGeneros)
+	micro.Post("/genero", middleware.DeserializeUser, nuevoHandlerGeneros.CrearGenero)
+	micro.Put("/genero", middleware.DeserializeUser, nuevoHandlerGeneros.ModificarGenero)
 
 	micro.All("*", func(c *fiber.Ctx) error {
 		path := c.Path()

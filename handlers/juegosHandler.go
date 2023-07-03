@@ -126,11 +126,11 @@ func (j *juegosHandler) ModificarJuego(c *fiber.Ctx) error {
 
 	/*Comprobacion de los datos*/
 	/*Nombre*/
-	if len(strings.TrimSpace(body.Nombre)) < 0 || strings.TrimSpace(body.Nombre) == "" {
+	if len(strings.TrimSpace(body.Nombre)) <= 0 || strings.TrimSpace(body.Nombre) == "" {
 		nuevoJuego.Nombre = body.Nombre
 	}
 
-	if len(strings.TrimSpace(body.Desarrollador)) < 0 || strings.TrimSpace(body.Desarrollador) == "" {
+	if len(strings.TrimSpace(body.Desarrollador)) <= 0 || strings.TrimSpace(body.Desarrollador) == "" {
 		nuevoJuego.Desarrollador = body.Desarrollador
 	}
 

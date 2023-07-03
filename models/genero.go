@@ -8,8 +8,8 @@ import (
 
 type Genero struct {
 	gorm.Model
-	Nombre      string `gorm:"type:varchar(100);not null;unique" json:"nombre"`
-	Descripcion string `gorm:"type:varchar(200);not null" json:"descripcion"`
+	Nombre      string `gorm:"not null;unique" json:"nombre"`
+	Descripcion string `gorm:"not null" json:"descripcion"`
 	ImagenURL   string `gorm:"not null;default:'default.png'" json:"imagenUrl"`
 }
 
